@@ -50,7 +50,7 @@ typedef struct {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
 	
-	[self addPanGesture];
+	[self addGestures];
 }
 
 - (void)didReceiveMemoryWarning
@@ -119,21 +119,19 @@ typedef struct {
     return _menuContainerView;
 }
 
-- (void)addPanGesture {
+- (void)addGestures {
+	
     if (!_panGesture) {
         _panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePanGesture:)];
 		[_panGesture setDelegate:self];
         [self.view addGestureRecognizer:_panGesture];
     }
-}
-
-- (UITapGestureRecognizer *)tapGesture {
-    if (!_tapGesture) {
+	
+	if (!_tapGesture) {
         _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleMenu)];
-        _tapGesture.enabled = NO;
+        [_tapGesture setDelegate:self];
+		[self.view addGestureRecognizer:_tapGesture];
     }
-    
-    return _tapGesture;
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)panGesture {
@@ -200,6 +198,7 @@ typedef struct {
 
 - (void)toggleMenu {
 	
+	[self isMenuOpen] ? [self closeMenu] : [self openMenu];
 }
 
 - (BOOL)isMenuOpen {
@@ -335,7 +334,14 @@ typedef struct {
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
 	
 	CGPoint point = [touch locationInView:self.view];
-	return [self slideMenuForGestureRecognizer:gestureRecognizer withTouchPoint:point];
+	
+	if (gestureRecognizer == _panGesture) {
+		return [self slideMenuForGestureRecognizer:gestureRecognizer withTouchPoint:point];
+	} else if (gestureRecognizer == _tapGesture){
+		return [self isMenuOpen] && ![self isPointContainedWithinMenuRect:point];
+	}
+	
+	return YES;
 }
 
 @end
