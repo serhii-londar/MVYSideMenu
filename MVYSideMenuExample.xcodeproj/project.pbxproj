@@ -321,6 +321,7 @@
 				C2ABB3F3178D680E0041CAF1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
