@@ -1,0 +1,18 @@
+//
+//  MVYSideMenuOptions.h
+//  MVYSideMenuExample
+//
+//  Created by Álvaro Murillo del Puerto on 10/07/13.
+//  Copyright (c) 2013 Mobivery. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface MVYSideMenuOptions : NSObject <NSCopying>
+
+@property (nonatomic, assign) CGFloat menuViewOverlapWidth;
+@property (nonatomic, assign) CGFloat bezelWidth;
+@property (nonatomic, assign) BOOL panFromBezel;
+@property (nonatomic, assign) BOOL panFromNavBar;
+
+@end
