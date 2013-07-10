@@ -147,8 +147,8 @@ typedef struct {
 		case UIGestureRecognizerStateBegan:
 			menuFrameAtStartOfPan = self.menuContainerView.frame;
 			startPointOfPan = [panGesture locationInView:self.view];
-			menuWasOpenAtStartOfPan = [self menuIsOpen];
-			menuWasHiddenAtStartOfPan = [self menuIsHidden];
+			menuWasOpenAtStartOfPan = [self isMenuOpen];
+			menuWasHiddenAtStartOfPan = [self isMenuHidden];
 			[self.menuViewController beginAppearanceTransition:menuWasHiddenAtStartOfPan animated:YES];
 			break;
 			
@@ -202,11 +202,11 @@ typedef struct {
 	
 }
 
-- (BOOL)menuIsOpen {
+- (BOOL)isMenuOpen {
 	return self.menuContainerView.frame.origin.x == 0.0f;
 }
 
-- (BOOL)menuIsHidden {
+- (BOOL)isMenuHidden {
 	return self.menuContainerView.frame.origin.x <= [self menuMinOrigin];
 }
 
@@ -297,7 +297,7 @@ typedef struct {
 
 - (BOOL)slideMenuForGestureRecognizer:(UIGestureRecognizer *)gesture withTouchPoint:(CGPoint)point {
 	
-	BOOL slide = [self menuIsOpen];
+	BOOL slide = [self isMenuOpen];
 	
 	slide |= self.options.panFromBezel && [self isPointContainedWithinBezelRect:point];
 	
