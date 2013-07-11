@@ -15,6 +15,7 @@
 @property (nonatomic, strong, readonly) UIViewController *contentViewController;
 @property (nonatomic, copy) MVYSideMenuOptions *options;
 
+- (id)initWithMenuViewController:(UIViewController *)menuViewController contentViewController:(UIViewController *)contentViewController;
 - (id)initWithMenuViewController:(UIViewController *)menuViewController contentViewController:(UIViewController *)contentViewController options:(MVYSideMenuOptions *)options;
 - (void)closeMenu;
 - (void)openMenu;

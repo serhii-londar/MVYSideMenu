@@ -34,6 +34,11 @@ typedef struct {
 
 @implementation MVYSideMenuController
 
+- (id)initWithMenuViewController:(UIViewController *)menuViewController contentViewController:(UIViewController *)contentViewController {
+	
+	return [self initWithMenuViewController:menuViewController contentViewController:contentViewController options:[[MVYSideMenuOptions alloc] init]];
+}
+
 - (id)initWithMenuViewController:(UIViewController *)menuViewController contentViewController:(UIViewController *)contentViewController options:(MVYSideMenuOptions *)options {
 	
 	self = [super init];
