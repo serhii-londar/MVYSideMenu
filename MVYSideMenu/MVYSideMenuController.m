@@ -242,6 +242,13 @@ typedef struct {
 	[self openMenuWithVelocity:0.0f];
 }
 
+- (void)disable {
+	self.panGesture.enabled = NO;
+}
+- (void)enable {
+	self.panGesture.enabled = YES;
+}
+
 - (void)changeContentViewController:(UIViewController *)contentViewController closeMenu:(BOOL)closeMenu {
 	
 	self.contentViewController = contentViewController;
