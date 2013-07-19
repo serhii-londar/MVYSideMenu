@@ -153,11 +153,14 @@ typedef struct {
 			menuWasOpenAtStartOfPan = [self isMenuOpen];
 			menuWasHiddenAtStartOfPan = [self isMenuHidden];
 			[self.menuViewController beginAppearanceTransition:menuWasHiddenAtStartOfPan animated:YES];
+			[self addShadowToMenuView];
 			break;
 			
 		case UIGestureRecognizerStateChanged:{
 			CGPoint translation = [panGesture translationInView:panGesture.view];
 			self.menuContainerView.frame = [self applyTranslation:translation toFrame:menuFrameAtStartOfPan];
+			[self applyOpacity];
+			[self transformContent];
 			break;
 		}
 			
@@ -237,6 +240,29 @@ typedef struct {
     return newFrame;
 }
 
+- (void)applyOpacity {
+	
+	CGFloat minOpacity = 0.4;
+	
+	CGFloat width = self.view.bounds.size.width - self.options.menuViewOverlapWidth;
+	CGFloat currentPosition = self.menuContainerView.frame.origin.x - [self menuMinOrigin];
+	CGFloat openedPercentaje = currentPosition / width;
+	CGFloat opacity = 1.0 - ((1.0 - minOpacity) * openedPercentaje);
+	self.contentContainerView.layer.opacity = opacity;
+}
+
+- (void)transformContent {
+
+	CGFloat minScale = 0.96;
+	CGFloat width = self.view.bounds.size.width - self.options.menuViewOverlapWidth;
+	CGFloat currentPosition = self.menuContainerView.frame.origin.x - [self menuMinOrigin];
+	CGFloat openedPercentaje = currentPosition / width;
+	
+	CGFloat scale = 1.0 - ((1.0 - minScale) * openedPercentaje);
+	
+	[self.contentContainerView setTransform:CGAffineTransformMakeScale(scale, scale)];
+}
+
 - (void)openMenu {
 	
 	[self openMenuWithVelocity:0.0f];
@@ -273,8 +299,10 @@ typedef struct {
 	
 	[UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
 		self.menuContainerView.frame = frame;
+		[self addContentOpacity];
 	} completion:^(BOOL finished) {
-		
+		[self addShadowToMenuView];
+		[self transformContent];
 	}];
 }
 
@@ -301,8 +329,10 @@ typedef struct {
 	
 	[UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
 		self.menuContainerView.frame = frame;
+		[self removeContentOpacity];
 	} completion:^(BOOL finished) {
-		
+		[self removeMenuShadow];
+		[self transformContent];
 	}];
 }
 
@@ -341,6 +371,8 @@ typedef struct {
 	return CGRectContainsPoint(self.menuContainerView.frame, point);
 }
 
+
+
 #pragma mark – UIGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
@@ -354,6 +386,27 @@ typedef struct {
 	}
 	
 	return YES;
+}
+
+- (void)addShadowToMenuView {
+	
+	self.menuContainerView.layer.masksToBounds = NO;
+	self.menuContainerView.layer.shadowOffset = CGSizeMake(8, 0);
+	self.menuContainerView.layer.shadowOpacity = 0.5;
+}
+
+- (void)removeMenuShadow {
+	
+	self.menuContainerView.layer.masksToBounds = YES;
+	self.contentContainerView.layer.opacity = 1.0;
+}
+
+- (void)removeContentOpacity {
+	self.contentContainerView.layer.opacity = 1.0;
+}
+
+- (void)addContentOpacity {
+	self.contentContainerView.layer.opacity = 0.4;
 }
 
 @end
