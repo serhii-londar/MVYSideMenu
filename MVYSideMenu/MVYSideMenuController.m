@@ -35,12 +35,17 @@ typedef struct {
 @implementation MVYSideMenuController
 
 
-- (id)initWithMenuViewController:(UIViewController *)menuViewController contentViewController:(UIViewController *)contentViewController {
+- (id)initWithMenuViewController:(UIViewController *)menuViewController
+		   contentViewController:(UIViewController *)contentViewController {
 	
-	return [self initWithMenuViewController:menuViewController contentViewController:contentViewController options:[[MVYSideMenuOptions alloc] init]];
+	return [self initWithMenuViewController:menuViewController
+					  contentViewController:contentViewController
+									options:[[MVYSideMenuOptions alloc] init]];
 }
 
-- (id)initWithMenuViewController:(UIViewController *)menuViewController contentViewController:(UIViewController *)contentViewController options:(MVYSideMenuOptions *)options {
+- (id)initWithMenuViewController:(UIViewController *)menuViewController
+		   contentViewController:(UIViewController *)contentViewController
+						 options:(MVYSideMenuOptions *)options {
 	
 	self = [super init];
 	if(self){
@@ -193,7 +198,7 @@ typedef struct {
 			CGPoint translation = [panGesture translationInView:panGesture.view];
 			self.menuContainerView.frame = [self applyTranslation:translation toFrame:menuFrameAtStartOfPan];
 			[self applyOpacity];
-			[self transformContent];
+			[self applyContentViewScale];
 			break;
 		}
 			
@@ -273,22 +278,24 @@ typedef struct {
     return newFrame;
 }
 
-- (void)applyOpacity {
+- (CGFloat)getOpenedMenuRatio {
 	
 	CGFloat width = self.view.bounds.size.width - self.options.menuViewOverlapWidth;
 	CGFloat currentPosition = self.menuContainerView.frame.origin.x - [self menuMinOrigin];
-	CGFloat openedPercentaje = currentPosition / width;
-	CGFloat opacity = 1.0 - ((1.0 - self.options.contentViewOpacity) * openedPercentaje);
+	return currentPosition / width;
+}
+
+- (void)applyOpacity {
+	
+	CGFloat openedMenuRatio = [self getOpenedMenuRatio];
+	CGFloat opacity = 1.0 - ((1.0 - self.options.contentViewOpacity) * openedMenuRatio);
 	self.contentContainerView.layer.opacity = opacity;
 }
 
-- (void)transformContent {
+- (void)applyContentViewScale {
 
-	CGFloat width = self.view.bounds.size.width - self.options.menuViewOverlapWidth;
-	CGFloat currentPosition = self.menuContainerView.frame.origin.x - [self menuMinOrigin];
-	CGFloat openedPercentaje = currentPosition / width;
-	
-	CGFloat scale = 1.0 - ((1.0 - self.options.contentViewScale) * openedPercentaje);
+	CGFloat openedMenuRatio = [self getOpenedMenuRatio];	
+	CGFloat scale = 1.0 - ((1.0 - self.options.contentViewScale) * openedMenuRatio);
 	
 	[self.contentContainerView setTransform:CGAffineTransformMakeScale(scale, scale)];
 }
@@ -378,23 +385,6 @@ typedef struct {
 	return CGRectContainsPoint(self.menuContainerView.frame, point);
 }
 
-
-
-#pragma mark – UIGestureRecognizerDelegate
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
-	
-	CGPoint point = [touch locationInView:self.view];
-	
-	if (gestureRecognizer == _panGesture) {
-		return [self slideMenuForGestureRecognizer:gestureRecognizer withTouchPoint:point];
-	} else if (gestureRecognizer == _tapGesture){
-		return [self isMenuOpen] && ![self isPointContainedWithinMenuRect:point];
-	}
-	
-	return YES;
-}
-
 - (void)addShadowToMenuView {
 	
 	self.menuContainerView.layer.masksToBounds = NO;
@@ -414,6 +404,21 @@ typedef struct {
 
 - (void)addContentOpacity {
 	self.contentContainerView.layer.opacity = self.options.contentViewOpacity;
+}
+
+#pragma mark – UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+	
+	CGPoint point = [touch locationInView:self.view];
+	
+	if (gestureRecognizer == _panGesture) {
+		return [self slideMenuForGestureRecognizer:gestureRecognizer withTouchPoint:point];
+	} else if (gestureRecognizer == _tapGesture){
+		return [self isMenuOpen] && ![self isPointContainedWithinMenuRect:point];
+	}
+	
+	return YES;
 }
 
 @end
