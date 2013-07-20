@@ -12,7 +12,10 @@
 
 @property (nonatomic, assign) CGFloat menuViewOverlapWidth;
 @property (nonatomic, assign) CGFloat bezelWidth;
+@property (nonatomic, assign) CGFloat contentViewScale;
+@property (nonatomic, assign) CGFloat contentViewOpacity;
 @property (nonatomic, assign) BOOL panFromBezel;
 @property (nonatomic, assign) BOOL panFromNavBar;
+
 
 @end

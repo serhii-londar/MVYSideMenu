@@ -14,6 +14,8 @@
     if (self = [super init]) {
         self.menuViewOverlapWidth = 60.0f;
 		self.bezelWidth = 20.0f;
+		self.contentViewOpacity = 0.4f;
+		self.contentViewScale = 0.96f;
 		self.panFromBezel = YES;
 		self.panFromNavBar = YES;
     }
@@ -26,6 +28,8 @@
     MVYSideMenuOptions *options = [[MVYSideMenuOptions alloc] init];
     options.menuViewOverlapWidth = self.menuViewOverlapWidth;
 	options.bezelWidth = self.bezelWidth;
+	options.contentViewOpacity = self.contentViewOpacity;
+	options.contentViewScale = self.contentViewScale;
     options.panFromBezel = self.panFromBezel;
 	options.panFromNavBar = self.panFromNavBar;
 	

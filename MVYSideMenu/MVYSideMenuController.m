@@ -114,6 +114,7 @@ typedef struct {
     if (_menuContainerView == nil) {
 		CGRect frame = self.view.bounds;
 		frame.size.width = frame.size.width - self.options.menuViewOverlapWidth;
+		frame.origin.x = [self menuMinOrigin];
         _menuContainerView = [[UIView alloc] initWithFrame:frame];
         _menuContainerView.backgroundColor = [UIColor clearColor];
         _menuContainerView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
@@ -242,23 +243,20 @@ typedef struct {
 
 - (void)applyOpacity {
 	
-	CGFloat minOpacity = 0.4;
-	
 	CGFloat width = self.view.bounds.size.width - self.options.menuViewOverlapWidth;
 	CGFloat currentPosition = self.menuContainerView.frame.origin.x - [self menuMinOrigin];
 	CGFloat openedPercentaje = currentPosition / width;
-	CGFloat opacity = 1.0 - ((1.0 - minOpacity) * openedPercentaje);
+	CGFloat opacity = 1.0 - ((1.0 - self.options.contentViewOpacity) * openedPercentaje);
 	self.contentContainerView.layer.opacity = opacity;
 }
 
 - (void)transformContent {
 
-	CGFloat minScale = 0.96;
 	CGFloat width = self.view.bounds.size.width - self.options.menuViewOverlapWidth;
 	CGFloat currentPosition = self.menuContainerView.frame.origin.x - [self menuMinOrigin];
 	CGFloat openedPercentaje = currentPosition / width;
 	
-	CGFloat scale = 1.0 - ((1.0 - minScale) * openedPercentaje);
+	CGFloat scale = 1.0 - ((1.0 - self.options.contentViewScale) * openedPercentaje);
 	
 	[self.contentContainerView setTransform:CGAffineTransformMakeScale(scale, scale)];
 }
@@ -299,10 +297,10 @@ typedef struct {
 	
 	[UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
 		self.menuContainerView.frame = frame;
-		[self addContentOpacity];
+		self.contentContainerView.layer.opacity = self.options.contentViewOpacity;
+		[self.contentContainerView setTransform:CGAffineTransformMakeScale(self.options.contentViewScale, self.options.contentViewScale)];
 	} completion:^(BOOL finished) {
 		[self addShadowToMenuView];
-		[self transformContent];
 	}];
 }
 
@@ -329,10 +327,10 @@ typedef struct {
 	
 	[UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
 		self.menuContainerView.frame = frame;
-		[self removeContentOpacity];
+		self.contentContainerView.layer.opacity = 1.0;
+		[self.contentContainerView setTransform:CGAffineTransformMakeScale(1.0, 1.0)];
 	} completion:^(BOOL finished) {
-		[self removeMenuShadow];
-		[self transformContent];
+		[self removeMenuShadow];		
 	}];
 }
 
@@ -406,7 +404,7 @@ typedef struct {
 }
 
 - (void)addContentOpacity {
-	self.contentContainerView.layer.opacity = 0.4;
+	self.contentContainerView.layer.opacity = self.options.contentViewOpacity;
 }
 
 @end
