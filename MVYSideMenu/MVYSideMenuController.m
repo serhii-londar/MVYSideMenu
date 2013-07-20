@@ -34,6 +34,7 @@ typedef struct {
 
 @implementation MVYSideMenuController
 
+
 - (id)initWithMenuViewController:(UIViewController *)menuViewController contentViewController:(UIViewController *)contentViewController {
 	
 	return [self initWithMenuViewController:menuViewController contentViewController:contentViewController options:[[MVYSideMenuOptions alloc] init]];
@@ -97,6 +98,37 @@ typedef struct {
 	}
 	
 }
+
+- (void)closeMenu {
+	
+	[self closeMenuWithVelocity:0.0f];
+}
+
+- (void)openMenu {
+	
+	[self openMenuWithVelocity:0.0f];
+}
+
+- (void)disable {
+	self.panGesture.enabled = NO;
+}
+
+- (void)enable {
+	self.panGesture.enabled = YES;
+}
+
+- (void)changeContentViewController:(UIViewController *)contentViewController closeMenu:(BOOL)closeMenu {
+	
+	self.contentViewController = contentViewController;
+	closeMenu ? [self closeMenu] : nil;
+}
+
+- (void)changeMenuViewController:(UIViewController *)menuViewController closeMenu:(BOOL)closeMenu {
+	self.menuViewController = menuViewController;
+	closeMenu ? [self closeMenu] : nil;
+}
+
+#pragma mark – Private methods
 
 - (UIView *)contentContainerView {
     if (_contentContainerView == nil) {
@@ -261,24 +293,6 @@ typedef struct {
 	[self.contentContainerView setTransform:CGAffineTransformMakeScale(scale, scale)];
 }
 
-- (void)openMenu {
-	
-	[self openMenuWithVelocity:0.0f];
-}
-
-- (void)disable {
-	self.panGesture.enabled = NO;
-}
-- (void)enable {
-	self.panGesture.enabled = YES;
-}
-
-- (void)changeContentViewController:(UIViewController *)contentViewController closeMenu:(BOOL)closeMenu {
-	
-	self.contentViewController = contentViewController;
-	closeMenu ? [self closeMenu] : nil;
-}
-
 - (void)openMenuWithVelocity:(CGFloat)velocity {
 	
 	CGFloat menuXOrigin = self.menuContainerView.frame.origin.x;
@@ -302,11 +316,6 @@ typedef struct {
 	} completion:^(BOOL finished) {
 		[self addShadowToMenuView];
 	}];
-}
-
-- (void)closeMenu {
-	
-	[self closeMenuWithVelocity:0.0f];
 }
 
 - (void)closeMenuWithVelocity:(CGFloat)velocity {

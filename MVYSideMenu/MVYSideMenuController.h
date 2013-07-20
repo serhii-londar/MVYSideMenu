@@ -22,6 +22,7 @@
 - (void)disable;
 - (void)enable;
 - (void)changeContentViewController:(UIViewController *)contentViewController closeMenu:(BOOL)closeMenu;
+- (void)changeMenuViewController:(UIViewController *)menuViewController closeMenu:(BOOL)closeMenu;
 
 @end
 
