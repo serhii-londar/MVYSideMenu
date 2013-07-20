@@ -21,8 +21,11 @@
 	
 	MVYMenuViewController *menuVC = [[MVYMenuViewController alloc] initWithNibName:@"MVYMenuViewController" bundle:nil];
 	MVYContentViewController *contentVC = [[MVYContentViewController alloc] initWithNibName:@"MVYContentViewController" bundle:nil];
+	UINavigationController *contentNavigationController = [[UINavigationController alloc] initWithRootViewController:contentVC];
 	MVYSideMenuOptions *options = [[MVYSideMenuOptions alloc] init];
-	MVYSideMenuController *sideMenuController = [[MVYSideMenuController alloc] initWithMenuViewController:menuVC contentViewController:contentVC options:options];
+	MVYSideMenuController *sideMenuController = [[MVYSideMenuController alloc] initWithMenuViewController:menuVC
+																					contentViewController:contentNavigationController
+																								  options:options];
 	
 	self.window.rootViewController = sideMenuController;
     [self.window makeKeyAndVisible];

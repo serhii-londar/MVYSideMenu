@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MVYMenuViewController : UIViewController
+@interface MVYMenuViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
-- (IBAction)closeMenu:(id)sender;
 
 @end

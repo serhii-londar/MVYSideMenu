@@ -8,8 +8,12 @@
 
 #import "MVYMenuViewController.h"
 #import "MVYSideMenuController.h"
+#import "MVYContentViewController.h"
 
 @interface MVYMenuViewController ()
+
+@property (nonatomic, weak) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) NSArray *menuItems;
 
 @end
 
@@ -28,6 +32,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+	
+	[self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"MenuCell"];
+	self.menuItems = @[@"Menu Item 1", @"Menu Item 2", @"Menu Item 3", @"Menu Item 4", @"Menu Item 5"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -36,12 +43,33 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)closeMenu:(id)sender {
+#pragma mark – UITableViewDataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 	
-	MVYSideMenuController *sideMenuController = [self sideMenuController];
-	if (sideMenuController) {
-		[sideMenuController closeMenu];
-	}
+	return self.menuItems.count;
 }
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+	
+	static NSString *cellIdentifier = @"MenuCell";
+	
+	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+	
+	NSString *item = [self.menuItems objectAtIndex:indexPath.row];
+	[cell.textLabel setText:item];
+	
+	return cell;
+}
+
+#pragma mark – UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+	
+	MVYContentViewController *contentVC = [[MVYContentViewController alloc] initWithNibName:@"MVYContentViewController" bundle:nil];
+	[[self sideMenuController] changeContentViewController:contentVC closeMenu:YES];
+}
+
+
 
 @end
