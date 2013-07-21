@@ -322,6 +322,7 @@ typedef struct {
 		[self.contentContainerView setTransform:CGAffineTransformMakeScale(self.options.contentViewScale, self.options.contentViewScale)];
 	} completion:^(BOOL finished) {
 		[self addShadowToMenuView];
+		[self disableContentInteraction];
 	}];
 }
 
@@ -346,7 +347,8 @@ typedef struct {
 		self.contentContainerView.layer.opacity = 1.0;
 		[self.contentContainerView setTransform:CGAffineTransformMakeScale(1.0, 1.0)];
 	} completion:^(BOOL finished) {
-		[self removeMenuShadow];		
+		[self removeMenuShadow];
+		[self enableContentInteraction];
 	}];
 }
 
@@ -404,6 +406,14 @@ typedef struct {
 
 - (void)addContentOpacity {
 	self.contentContainerView.layer.opacity = self.options.contentViewOpacity;
+}
+
+- (void)disableContentInteraction {
+	[self.contentContainerView setUserInteractionEnabled:NO];
+}
+
+- (void)enableContentInteraction {
+	[self.contentContainerView setUserInteractionEnabled:YES];
 }
 
 #pragma mark – UIGestureRecognizerDelegate
