@@ -53,7 +53,7 @@ options.panFromNavBar = YES;
 MVYSideMenuController *sideMenuController = [[MVYSideMenuController alloc] initWithMenuViewController:menuVC contentViewController:contentVC options:options];
 ```
 
-###Accesing from your view controllers
+###Accessing from your view controllers
 
 You only need to import `MVYSideMenu` from your view controller
 
