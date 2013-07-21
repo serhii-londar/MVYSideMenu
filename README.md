@@ -3,7 +3,7 @@ MVYSideMenu
 
 iOS Side Menu based on Google+ iPhone app.
 
-<img src="https://raw.github.com/mobivery/MVYSideMenu/master/MVYSideMenuExample/Screenshots/Screenshot-01.png"/>
+![Menu animation](https://raw.github.com/mobivery/MVYSideMenu/master/MVYSideMenuExample/Screenshots/AnimatedMenu.gif)
 
 ##Installation
 
