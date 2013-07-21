@@ -1,7 +1,7 @@
 MVYSideMenu
 ===========
 
-iOS Side Menu based on Google+ iPhone app.
+iOS Ribbon Menu based on Google+ iPhone app.
 
 ![Menu animation](https://raw.github.com/mobivery/MVYSideMenu/master/MVYSideMenuExample/Screenshots/AnimatedMenu.gif)
 
