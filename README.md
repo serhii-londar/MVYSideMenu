@@ -39,7 +39,7 @@ In your app delegate:
 }
 ```
 
-You can also initialize with your custom options:
+You can also initialize it with your custom options:
 
 ```objective-c
 MVYSideMenuOptions *options = [[MVYSideMenuOptions alloc] init];
@@ -53,9 +53,9 @@ options.panFromNavBar = YES;
 MVYSideMenuController *sideMenuController = [[MVYSideMenuController alloc] initWithMenuViewController:menuVC contentViewController:contentVC options:options];
 ```
 
-###Accessing from your view controllers
+###Accessing it from a Child View Controller
 
-You only need to import `MVYSideMenu` from your view controller
+You only need to import `MVYSideMenu` in your view controller
 
 ```objective-c
 #import "MVYSideMenu.h"
