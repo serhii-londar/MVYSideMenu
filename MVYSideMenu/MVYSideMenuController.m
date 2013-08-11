@@ -27,6 +27,7 @@ typedef struct {
 @property (nonatomic, strong) UIViewController *contentViewController;
 @property (strong, nonatomic) UIView *contentContainerView;
 @property (strong, nonatomic) UIView *menuContainerView;
+@property (strong, nonatomic) UIView *opacityView;
 @property (strong, nonatomic) UIPanGestureRecognizer *panGesture;
 @property (strong, nonatomic) UITapGestureRecognizer *tapGesture;
 
@@ -49,9 +50,9 @@ typedef struct {
 	
 	self = [super init];
 	if(self){
-		self.options = options;
-		self.menuViewController = menuViewController;
-		self.contentViewController = contentViewController;
+		_options = options;
+		_menuViewController = menuViewController;
+		_contentViewController = contentViewController;
 	}
 	return self;
 }
@@ -60,6 +61,9 @@ typedef struct {
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+	
+	[self setUpMenuViewController:_menuViewController];
+	[self setUpContentViewController:_contentViewController];
 	
 	[self addGestures];
 }
@@ -72,35 +76,21 @@ typedef struct {
 
 - (void)setMenuViewController:(UIViewController *)menuViewController {
 	
-	if (_menuViewController != menuViewController) {
-		[_menuViewController willMoveToParentViewController:nil];
-		[_menuViewController.view removeFromSuperview];
-		[_menuViewController removeFromParentViewController];
-		
-		_menuViewController = menuViewController;
-		
-		[self addChildViewController:_menuViewController];
-		_menuViewController.view.frame = self.menuContainerView.bounds;
-		[self.menuContainerView addSubview:_menuViewController.view];
-		[_menuViewController didMoveToParentViewController:self];
-	}
+	[self removeViewController:_menuViewController];
+	
+	_menuViewController = menuViewController;
+	
+	[self setUpMenuViewController:_menuViewController];
 	
 }
 
 - (void)setContentViewController:(UIViewController *)contentViewController {
 	
-	if (_contentViewController != contentViewController) {
-		[_contentViewController willMoveToParentViewController:nil];
-		[_contentViewController.view removeFromSuperview];
-		[_contentViewController removeFromParentViewController];
-		
-		_contentViewController = contentViewController;
-		
-		[self addChildViewController:_contentViewController];
-		_contentViewController.view.frame = self.contentContainerView.bounds;
-		[self.contentContainerView addSubview:_contentViewController.view];
-		[_contentViewController didMoveToParentViewController:self];
-	}
+	[self removeViewController:_contentViewController];
+	
+	_contentViewController = contentViewController;
+	
+	[self setUpContentViewController:_contentViewController];
 	
 }
 
@@ -135,8 +125,52 @@ typedef struct {
 
 #pragma mark – Private methods
 
+- (void)removeViewController:(UIViewController *)menuViewController {
+	
+	if (menuViewController) {
+		[menuViewController willMoveToParentViewController:nil];
+		[menuViewController.view removeFromSuperview];
+		[menuViewController removeFromParentViewController];
+	}
+}
+
+- (void)setUpMenuViewController:(UIViewController *)menuViewController {
+	
+	if (menuViewController) {
+		[self addChildViewController:menuViewController];
+		menuViewController.view.frame = self.menuContainerView.bounds;
+		[self.menuContainerView addSubview:menuViewController.view];
+		[menuViewController didMoveToParentViewController:self];
+	}
+}
+
+- (void)setUpContentViewController:(UIViewController *)contentViewController {
+	
+	if (contentViewController) {
+		[self addChildViewController:contentViewController];
+		contentViewController.view.frame = self.contentContainerView.bounds;
+		[self.contentContainerView addSubview:contentViewController.view];
+		[contentViewController didMoveToParentViewController:self];
+	}
+	
+}
+
+- (UIView *)opacityView {
+
+	if (!_opacityView) {
+		_opacityView = [[UIView alloc] initWithFrame:self.view.bounds];
+        _opacityView.backgroundColor = [UIColor blackColor];
+        _opacityView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+		_opacityView.layer.opacity = 0.0;
+        
+        [self.view insertSubview:_opacityView atIndex:1];
+	}
+	
+	return _opacityView;
+}
+
 - (UIView *)contentContainerView {
-    if (_contentContainerView == nil) {
+    if (!_contentContainerView) {
         _contentContainerView = [[UIView alloc] initWithFrame:self.view.bounds];
         _contentContainerView.backgroundColor = [UIColor clearColor];
         _contentContainerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
@@ -148,7 +182,7 @@ typedef struct {
 }
 
 - (UIView *)menuContainerView {
-    if (_menuContainerView == nil) {
+    if (!_menuContainerView) {
 		CGRect frame = self.view.bounds;
 		frame.size.width = frame.size.width - self.options.menuViewOverlapWidth;
 		frame.origin.x = [self menuMinOrigin];
@@ -156,7 +190,7 @@ typedef struct {
         _menuContainerView.backgroundColor = [UIColor clearColor];
         _menuContainerView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
         
-        [self.view insertSubview:_menuContainerView atIndex:1];
+        [self.view insertSubview:_menuContainerView atIndex:2];
     }
     
     return _menuContainerView;
@@ -288,8 +322,8 @@ typedef struct {
 - (void)applyOpacity {
 	
 	CGFloat openedMenuRatio = [self getOpenedMenuRatio];
-	CGFloat opacity = 1.0 - ((1.0 - self.options.contentViewOpacity) * openedMenuRatio);
-	self.contentContainerView.layer.opacity = opacity;
+	CGFloat opacity = (1.0 - self.options.contentViewOpacity) * openedMenuRatio;
+	self.opacityView.layer.opacity = opacity;
 }
 
 - (void)applyContentViewScale {
@@ -310,28 +344,19 @@ typedef struct {
 	
 	NSTimeInterval duration;
 	if (velocity == 0.0f) {
-        
-        if (self.options.animationDuration == CGFLOAT_MAX) {
-
-            duration = 0.4f;
-            
-        } else {
-            
-            duration = self.options.animationDuration;
-            
-        }
-        
+        duration = self.options.animationDuration;        
 	} else {
 		duration = fabs(menuXOrigin - finalXOrigin) / velocity;
 		duration = fmax(0.1, fmin(1.0f, duration));
 	}
 	
+	[self addShadowToMenuView];
+	
 	[UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
 		self.menuContainerView.frame = frame;
-		self.contentContainerView.layer.opacity = self.options.contentViewOpacity;
+		self.opacityView.layer.opacity = self.options.contentViewOpacity;
 		[self.contentContainerView setTransform:CGAffineTransformMakeScale(self.options.contentViewScale, self.options.contentViewScale)];
 	} completion:^(BOOL finished) {
-		[self addShadowToMenuView];
 		[self disableContentInteraction];
 	}];
 }
@@ -364,7 +389,7 @@ typedef struct {
 	
 	[UIView animateWithDuration:duration delay:0.0f options:UIViewAnimationOptionCurveEaseInOut animations:^{
 		self.menuContainerView.frame = frame;
-		self.contentContainerView.layer.opacity = 1.0;
+		self.opacityView.layer.opacity = 0.0f;
 		[self.contentContainerView setTransform:CGAffineTransformMakeScale(1.0, 1.0)];
 	} completion:^(BOOL finished) {
 		[self removeMenuShadow];
@@ -421,11 +446,11 @@ typedef struct {
 }
 
 - (void)removeContentOpacity {
-	self.contentContainerView.layer.opacity = 1.0;
+	self.opacityView.layer.opacity = 0.0;
 }
 
 - (void)addContentOpacity {
-	self.contentContainerView.layer.opacity = self.options.contentViewOpacity;
+	self.opacityView.layer.opacity = self.options.contentViewOpacity;
 }
 
 - (void)disableContentInteraction {
