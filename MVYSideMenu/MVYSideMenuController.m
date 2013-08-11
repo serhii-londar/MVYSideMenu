@@ -322,7 +322,7 @@ typedef struct {
 - (void)applyOpacity {
 	
 	CGFloat openedMenuRatio = [self getOpenedMenuRatio];
-	CGFloat opacity = (1.0 - self.options.contentViewOpacity) * openedMenuRatio;
+	CGFloat opacity = self.options.contentViewOpacity * openedMenuRatio;
 	self.opacityView.layer.opacity = opacity;
 }
 
