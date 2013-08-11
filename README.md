@@ -46,7 +46,7 @@ MVYSideMenuOptions *options = [[MVYSideMenuOptions alloc] init];
 options.menuViewOverlapWidth = 60.0f;
 options.bezelWidth = 15.0f;
 options.contentViewScale = 0.9f; // 1.0f to disable scale
-options.contentViewOpacity = 0.5f; // 1.0f to disable opacity
+options.contentViewOpacity = 0.5f; // 0.0f to disable opacity
 options.panFromBezel = NO;
 options.panFromNavBar = YES;
   
@@ -81,15 +81,15 @@ OtherMenuViewController *otherMenuVC = [[OtherMenuViewController alloc] initWith
 [sideMenuController changeMenuViewController:otherMenuVC closeMenu:YES];
 ```
 
-# Requirements
+## Requirements
 
 Requires iOS 5.0 and ARC.
 
-# Contributing
+## Contributing
 
 Forks, patches and other feedback are welcome.
 
-### Creators
+## Creator
 
 [Álvaro Murillo](http://github.com/alvaromurillo)
 [@alvaromurillop](https://twitter.com/alvaromurillop)
