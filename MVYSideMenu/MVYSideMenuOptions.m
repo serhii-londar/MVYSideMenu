@@ -12,13 +12,13 @@
 
 - (id)init {
     if (self = [super init]) {
-        self.menuViewOverlapWidth = 60.0f;
-		self.bezelWidth = 20.0f;
-		self.contentViewOpacity = 0.4f;
-		self.contentViewScale = 0.96f;
-		self.panFromBezel = YES;
-		self.panFromNavBar = YES;
-        _animationDuration = CGFLOAT_MAX;
+        _menuViewOverlapWidth = 60.0f;
+		_bezelWidth = 20.0f;
+		_contentViewOpacity = 0.4f;
+		_contentViewScale = 0.96f;
+		_panFromBezel = YES;
+		_panFromNavBar = YES;
+        _animationDuration = 0.4f;
     }
     
     return self;
