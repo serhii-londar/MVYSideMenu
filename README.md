@@ -49,6 +49,7 @@ options.contentViewScale = 0.9f; // 1.0f to disable scale
 options.contentViewOpacity = 0.5f; // 0.0f to disable opacity
 options.panFromBezel = NO;
 options.panFromNavBar = YES;
+options.animationDuration = 0.3f;
   
 MVYSideMenuController *sideMenuController = [[MVYSideMenuController alloc] initWithMenuViewController:menuVC contentViewController:contentVC options:options];
 ```
