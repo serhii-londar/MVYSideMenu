@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage = 'http://mobivery.com'
   s.screenshots  = "https://raw.github.com/mobivery/MVYSideMenu/master/MVYSideMenuExample/Screenshots/Screenshot-01.png"
   s.authors  = { 'Álvaro Murillo' => 'alvaro.murillo@mobivery.com' }
-  s.source   = { :git => 'https://github.com/mobivery/MVYSideMenu.git', :tag => '0.0.7' }
+  s.source   = { :git => 'https://github.com/mobivery/MVYSideMenu.git', :tag => '0.0.6' }
   s.platform     = :ios, '5.0'
   s.source_files = 'MVYSideMenu/*.{h,m}'
   s.requires_arc = true
