@@ -28,6 +28,8 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+	
+	[self addLeftMenuButtonWithImage:[UIImage imageNamed:@"menu_icon"]];
 }
 
 - (void)didReceiveMemoryWarning
