@@ -19,6 +19,7 @@
 - (id)initWithMenuViewController:(UIViewController *)menuViewController contentViewController:(UIViewController *)contentViewController options:(MVYSideMenuOptions *)options;
 - (void)closeMenu;
 - (void)openMenu;
+- (void)toggleMenu;
 - (void)disable;
 - (void)enable;
 - (void)changeContentViewController:(UIViewController *)contentViewController closeMenu:(BOOL)closeMenu;
