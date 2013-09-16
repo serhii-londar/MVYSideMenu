@@ -495,4 +495,15 @@ typedef struct {
     return nil;
 }
 
+- (void)addLeftMenuButtonWithImage:(UIImage *)buttonImage {
+	
+	UIBarButtonItem *menuButton = [[UIBarButtonItem alloc] initWithImage:buttonImage style:UIBarButtonItemStyleBordered target:self action:@selector(toggleMenu)];
+	self.navigationItem.leftBarButtonItem = menuButton;
+}
+
+- (void)toggleMenu {
+	
+	[[self sideMenuController] toggleMenu];
+}
+
 @end
