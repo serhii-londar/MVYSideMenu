@@ -67,7 +67,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	
 	MVYContentViewController *contentVC = [[MVYContentViewController alloc] initWithNibName:@"MVYContentViewController" bundle:nil];
-	[[self sideMenuController] changeContentViewController:contentVC closeMenu:YES];
+	UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:contentVC];
+	[[self sideMenuController] changeContentViewController:navigationController closeMenu:YES];
 }
 
 
