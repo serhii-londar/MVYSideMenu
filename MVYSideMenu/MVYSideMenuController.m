@@ -411,7 +411,7 @@ typedef struct {
     CGRect navigationBarRect = CGRectNull;
     if([self.contentViewController isKindOfClass:[UINavigationController class]]){
         UINavigationBar * navBar = [(UINavigationController*)self.contentViewController navigationBar];
-        navigationBarRect = [navBar convertRect:navBar.frame toView:self.view];
+        navigationBarRect = [self.contentViewController.view convertRect:navBar.frame toView:self.view];
         navigationBarRect = CGRectIntersection(navigationBarRect,self.view.bounds);
     }
     return CGRectContainsPoint(navigationBarRect,point);
