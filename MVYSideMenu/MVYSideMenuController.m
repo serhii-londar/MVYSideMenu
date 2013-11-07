@@ -89,7 +89,7 @@ typedef struct {
 	
 	menuFrame.origin.x = 0;
 	if (menuFrame.size.height < 0) {
-		menuFrame.size.height = self.view.bounds.size.height;
+		menuFrame.size.height = self.view.bounds.size.height - menuFrame.origin.y;
 	}
 	if (menuFrame.size.width < 0) {
 		menuFrame.size.width = self.view.bounds.size.width;
