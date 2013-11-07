@@ -83,6 +83,25 @@ typedef struct {
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark – Setters
+
+- (void)setMenuFrame:(CGRect)menuFrame {
+	
+	menuFrame.origin.x = 0;
+	if (menuFrame.size.height < 0) {
+		menuFrame.size.height = self.view.bounds.size.height;
+	}
+	if (menuFrame.size.width < 0) {
+		menuFrame.size.width = self.view.bounds.size.width;
+	}
+	
+	_menuFrame = menuFrame;
+	
+	if (_menuContainerView) {
+		_menuContainerView.frame = menuFrame;
+	}
+}
+
 - (void)setMenuViewController:(UIViewController *)menuViewController {
 	
 	[self removeViewController:_menuViewController];
@@ -103,6 +122,40 @@ typedef struct {
 	
 }
 
+#pragma mark – Getters
+
+- (UIView *)contentContainerView {
+    if (!_contentContainerView) {
+        _contentContainerView = [[UIView alloc] initWithFrame:self.view.bounds];
+        _contentContainerView.backgroundColor = [UIColor clearColor];
+        _contentContainerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        
+        [self.view insertSubview:_contentContainerView atIndex:0];
+    }
+    
+    return _contentContainerView;
+}
+
+- (UIView *)menuContainerView {
+    if (!_menuContainerView) {
+		if (CGRectEqualToRect(CGRectZero, self.menuFrame)) {
+			self.menuFrame = CGRectMake(0, 0, self.view.bounds.size.width - 60.0, self.view.bounds.size.height);
+		}
+		CGRect frame = self.menuFrame;
+		frame.origin.x = [self closedOriginX];
+        _menuContainerView = [[UIView alloc] initWithFrame:frame];
+        _menuContainerView.backgroundColor = [UIColor clearColor];
+        _menuContainerView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+        
+        [self.view insertSubview:_menuContainerView atIndex:2];
+    }
+    
+    return _menuContainerView;
+}
+
+#pragma mark – Public methods
+
+
 - (void)closeMenu {
 	
 	[self closeMenuWithVelocity:0.0f];
@@ -111,6 +164,11 @@ typedef struct {
 - (void)openMenu {
 	
 	[self openMenuWithVelocity:0.0f];
+}
+
+- (void)toggleMenu {
+	
+	[self isMenuOpen] ? [self closeMenu] : [self openMenu];
 }
 
 - (void)disable {
@@ -178,33 +236,6 @@ typedef struct {
 	return _opacityView;
 }
 
-- (UIView *)contentContainerView {
-    if (!_contentContainerView) {
-        _contentContainerView = [[UIView alloc] initWithFrame:self.view.bounds];
-        _contentContainerView.backgroundColor = [UIColor clearColor];
-        _contentContainerView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        
-        [self.view insertSubview:_contentContainerView atIndex:0];
-    }
-    
-    return _contentContainerView;
-}
-
-- (UIView *)menuContainerView {
-    if (!_menuContainerView) {
-		CGRect frame = self.view.bounds;
-		frame.size.width = frame.size.width - self.options.menuViewOverlapWidth;
-		frame.origin.x = [self menuMinOrigin];
-        _menuContainerView = [[UIView alloc] initWithFrame:frame];
-        _menuContainerView.backgroundColor = [UIColor clearColor];
-        _menuContainerView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
-        
-        [self.view insertSubview:_menuContainerView atIndex:2];
-    }
-    
-    return _menuContainerView;
-}
-
 - (void)addGestures {
 	
     if (!_panGesture) {
@@ -267,7 +298,7 @@ typedef struct {
 - (MVYSideMenuPanResultInfo)panResultInfoForVelocity:(CGPoint)velocity {
 	
 	static CGFloat thresholdVelocity = 450.0f;
-	CGFloat pointOfNoReturn = floorf([self menuMinOrigin] / 2.0f);
+	CGFloat pointOfNoReturn = floorf([self closedOriginX] / 2.0f);
 	CGFloat menuOrigin = self.menuContainerView.frame.origin.x;
 	
 	MVYSideMenuPanResultInfo panInfo = {MVYSideMenuClose, NO, 0.0f};
@@ -285,21 +316,16 @@ typedef struct {
 	return panInfo;
 }
 
-- (void)toggleMenu {
-	
-	[self isMenuOpen] ? [self closeMenu] : [self openMenu];
-}
-
 - (BOOL)isMenuOpen {
 	return self.menuContainerView.frame.origin.x == 0.0f;
 }
 
 - (BOOL)isMenuHidden {
-	return self.menuContainerView.frame.origin.x <= [self menuMinOrigin];
+	return self.menuContainerView.frame.origin.x <= [self closedOriginX];
 }
 
-- (CGFloat)menuMinOrigin {
-	return -(self.view.bounds.size.width - self.options.menuViewOverlapWidth);
+- (CGFloat)closedOriginX {
+	return - self.menuFrame.size.width;
 }
 
 - (CGRect)applyTranslation:(CGPoint)translation toFrame:(CGRect)frame {
@@ -307,7 +333,7 @@ typedef struct {
 	CGFloat newOrigin = frame.origin.x;
     newOrigin += translation.x;
 	
-    CGFloat minOrigin = [self menuMinOrigin];
+    CGFloat minOrigin = [self closedOriginX];
     CGFloat maxOrigin = 0.0f;
     CGRect newFrame = frame;
     
@@ -323,9 +349,8 @@ typedef struct {
 
 - (CGFloat)getOpenedMenuRatio {
 	
-	CGFloat width = self.view.bounds.size.width - self.options.menuViewOverlapWidth;
-	CGFloat currentPosition = self.menuContainerView.frame.origin.x - [self menuMinOrigin];
-	return currentPosition / width;
+	CGFloat currentPosition = self.menuContainerView.frame.origin.x - [self closedOriginX];
+	return currentPosition / self.menuFrame.size.width;
 }
 
 - (void)applyOpacity {
@@ -373,7 +398,7 @@ typedef struct {
 - (void)closeMenuWithVelocity:(CGFloat)velocity {
 	
 	CGFloat menuXOrigin = self.menuContainerView.frame.origin.x;
-	CGFloat finalXOrigin = [self menuMinOrigin];
+	CGFloat finalXOrigin = [self closedOriginX];
 	
 	CGRect frame = self.menuContainerView.frame;
 	frame.origin.x = finalXOrigin;
