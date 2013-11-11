@@ -98,6 +98,7 @@ typedef struct {
 	_menuFrame = menuFrame;
 	
 	if (_menuContainerView) {
+		menuFrame.origin.x = - menuFrame.size.width;
 		_menuContainerView.frame = menuFrame;
 	}
 }
