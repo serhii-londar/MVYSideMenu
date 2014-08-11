@@ -83,6 +83,22 @@ typedef struct {
     // Dispose of any resources that can be recreated.
 }
 
+- (BOOL)shouldAutorotate {
+    if (self.contentViewController) {
+        return [self.contentViewController shouldAutorotate];
+    } else {
+        return [super shouldAutorotate];
+    }
+}
+
+- (NSUInteger)supportedInterfaceOrientations {
+    if (self.contentViewController) {
+        return [self.contentViewController supportedInterfaceOrientations];
+    } else {
+        return [super supportedInterfaceOrientations];
+    }
+}
+
 #pragma mark – Setters
 
 - (void)setMenuFrame:(CGRect)menuFrame {
